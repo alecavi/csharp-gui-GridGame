@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,17 @@ namespace GridGame
         Button[,] buttons = new Button[7, 6];
         Player[] players = new Player[2];
         int activePlayer = 0;
+        private static readonly (int, int)[] directions = new (int, int)[] 
+        {
+            (1, 0),
+            (-1, 0),
+            (0, 1),
+            (0, -1),
+            (1, 1),
+            (-1, 1),
+            (1, -1),
+            (-1, -1),
+        };
 
         public Form1()
         {
@@ -28,7 +40,7 @@ namespace GridGame
                     button.SetBounds(45 + (45 * x), 45 + (45 * y), 45, 45);
                     button.BackColor = Color.LightGray;
                     button.Click += new EventHandler(this.ButtonEvent_Click);
-                    button.Tag = new ButtonPosition() { x = x, y = y };
+                    button.Tag = new Coordinate() { x = x, y = y };
                     Controls.Add(button);
                 }
             }
@@ -41,7 +53,7 @@ namespace GridGame
         void ButtonEvent_Click(object sender, EventArgs e)
         {
             var button = ((Button)sender);
-            int x = ((ButtonPosition)button.Tag).x;
+            int x = ((Coordinate)button.Tag).x;
 
 
             for(int i = buttons.GetLength(1) - 1; i >= 0; i--)
@@ -50,27 +62,40 @@ namespace GridGame
                 {
                     buttons[x, i].BackColor = players[activePlayer].Color;
                     activePlayer = (activePlayer + 1) % 2;
+                    if(DetectVictory(x, i))
+                    {
+                        //TODO: Actually terminate the game
+                        buttons[x, i].BackColor = Color.Blue;
+                    }
                     break;
                 }
             }
-
         }
 
-        //TODO: draw the color of the player that is currently active.
-        override protected void OnPaint(PaintEventArgs e)
+        bool DetectVictory(int coordX, int coordY)
         {
-            //Method body adapted from https://docs.microsoft.com/en-us/dotnet/desktop/winforms/advanced/how-to-draw-a-filled-rectangle-on-a-windows-form?view=netframeworkdesktop-4.8
-            SolidBrush myBrush = new System.Drawing.SolidBrush(System.Drawing.Color.Red);
-            Graphics formGraphics;
-            formGraphics = this.CreateGraphics();
-            formGraphics.FillRectangle(myBrush, new Rectangle(600, 55, 45, 45));
-            myBrush.Dispose();
-            formGraphics.Dispose();
-        }
+            return directions.Any(offset => 
+            {
+                (var offsetX, var offsetY) = offset;
+                var colors = Enumerable.Range(0, 4)
+                    .Select(i =>
+                    {
+                        var x = offsetX * i + coordX;
+                        var y = offsetY * i + coordY;
+                        if (x < 0 || y < 0 || x >= buttons.GetLength(0) || y >= buttons.GetLength(1))
+                            return Color.Empty;
+                        else
+                            return buttons[x, y].BackColor;
+                    });
 
+                var firstColor = colors.First();
+                Debug.Assert(firstColor != Color.Empty); //First color should always be [coord.x, coord.y], which should always fall in bounds
+                return colors.All(color => color == firstColor);
+            });
+        }
     }
 
-    struct ButtonPosition
+    struct Coordinate
     {
         public int x;
         public int y;
