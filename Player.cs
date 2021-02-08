@@ -7,10 +7,9 @@ using System.Threading.Tasks;
 
 namespace GridGame
 {
-    class Player
+    public class Player
     {
-        public Color Color
-        { get; }
+        public Color Color { get; }
 
         public Player(Color color)
         {
