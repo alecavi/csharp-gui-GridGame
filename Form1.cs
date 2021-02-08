@@ -13,10 +13,10 @@ namespace GridGame
 {
     public partial class Form1 : Form
     {
-        Button[,] buttons = new Button[7, 6];
-        Player[] players = new Player[2];
-        int activePlayer = 0;
-        private static readonly (int, int)[] directions = new (int, int)[] 
+        private readonly Button[,] buttons = new Button[7, 6];
+        private readonly Player[] players = new Player[2];
+        private int activePlayer = 0;
+        private static readonly (int, int)[] DIRECTIONS = new (int, int)[] 
         {
             (1, 0),
             (-1, 0),
@@ -28,9 +28,49 @@ namespace GridGame
             (-1, -1),
         };
 
+        private Panel activePanel;
+        private readonly Panel gamePanel = new Panel();
+        private readonly Panel menuPanel = new Panel();
+        private static readonly int MENU_BUTTON_WIDTH = 100;
+        private static readonly int MENU_BUTTON_HEIGHT = 50;
+
         public Form1()
         {
             InitializeComponent();
+
+            InitializeMenuPanel();
+            InitializeGamePanel();
+
+            players[0] = new Player(Color.Red);
+            players[1] = new Player(Color.Yellow);
+
+        }
+
+        private void InitializeMenuPanel()
+        {
+            menuPanel.Location = new Point(0, 0);
+            menuPanel.Size = new Size(Width, Height);
+
+            var playButton = new Button();
+            playButton.SetBounds((Width / 2) - (MENU_BUTTON_WIDTH / 2), 50, MENU_BUTTON_WIDTH, MENU_BUTTON_HEIGHT);
+            playButton.Text = "PLAY";
+            playButton.Click += new EventHandler((sender, e) =>
+            {
+                //These three lines were inspired by https://stackoverflow.com/questions/13584902/change-content-in-a-windows-form
+                activePanel.Visible = false;
+                activePanel = gamePanel;
+                activePanel.Visible = true;
+            });
+
+            menuPanel.Controls.Add(playButton);
+            Controls.Add(menuPanel);
+            activePanel = menuPanel;
+        }
+
+        private void InitializeGamePanel()
+        {
+            gamePanel.Location = new Point(0, 0);
+            gamePanel.Size = new Size(Width, Height);
             for(int x = 0; x < buttons.GetLength(0); x++)
             {
                 for (int y = 0; y < buttons.GetLength(1); y++)
@@ -39,15 +79,12 @@ namespace GridGame
                     button = new Button();
                     button.SetBounds(45 + (45 * x), 45 + (45 * y), 45, 45);
                     button.BackColor = Color.LightGray;
-                    button.Click += new EventHandler(this.ButtonEvent_Click);
+                    button.Click += new EventHandler(ButtonEvent_Click);
                     button.Tag = new Coordinate() { x = x, y = y };
-                    Controls.Add(button);
+                    gamePanel.Controls.Add(button);
                 }
             }
-
-            this.players[0] = new Player(Color.Red);
-            this.players[1] = new Player(Color.Yellow);
-
+            Controls.Add(gamePanel);
         }
 
         void ButtonEvent_Click(object sender, EventArgs e)
@@ -74,7 +111,7 @@ namespace GridGame
 
         bool DetectVictory(int coordX, int coordY)
         {
-            return directions.Any(offset => 
+            return DIRECTIONS.Any(offset => 
             {
                 (var offsetX, var offsetY) = offset;
                 var colors = Enumerable.Range(0, 4)
