@@ -36,6 +36,9 @@ namespace GridGame
         {
             this.parentForm = parentForm;
 
+            this.BackColor = Color.Lavender;
+                 
+
             Location = new Point(0, 0);
             Size = new Size(parentForm.Width, parentForm.Height);
             Name = "GamePanel";

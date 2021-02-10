@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 //TODO: Add a victory label to the end screen, to congratulate the winning player
-//TODO: Add a screen in which players input their names and colors
 
 namespace GridGame
 {
@@ -26,17 +25,28 @@ namespace GridGame
         {
             InitializeComponent();
 
-            MainMenuPanel = new MainMenuPanel(this);
+            MainMenuPanel = new MainMenuPanel(this)
+            {
+                Visible = false
+            };
             Controls.Add(MainMenuPanel);
 
-            GamePanel = new GamePanel(this);
-            GamePanel.Visible = false;
+            GamePanel = new GamePanel(this)
+            {
+                Visible = false
+            };
             Controls.Add(GamePanel);
 
-            PreGamePanel = new PreGamePanel(this);
+            PreGamePanel = new PreGamePanel(this)
+            {
+                Visible = false
+            };
             Controls.Add(PreGamePanel);
 
-            VictoryPanel = new VictoryPanel(this);
+            VictoryPanel = new VictoryPanel(this)
+            {
+                Visible = false
+            };
             Controls.Add(VictoryPanel);
 
             ActivePanel = MainMenuPanel;

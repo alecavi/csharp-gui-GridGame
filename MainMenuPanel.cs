@@ -11,8 +11,8 @@ namespace GridGame
     public class MainMenuPanel : Panel
     {
         private GameForm parentForm;
-        private static readonly int BUTTON_WIDTH = 100;
-        private static readonly int BUTTON_HEIGHT = 20;
+        private static readonly int BUTTON_WIDTH = 200;
+        private static readonly int BUTTON_HEIGHT = 50;
 
         public MainMenuPanel(GameForm parentForm)
         {
@@ -22,9 +22,11 @@ namespace GridGame
             Size = new Size(parentForm.Width, parentForm.Height);
             Name = "Main Menu";
 
-            var playButton = new Button();
+            var playButton = new Button
+            {
+                Text = "PLAY!"
+            };
             playButton.SetBounds((Width / 2) - (BUTTON_WIDTH / 2), 50, BUTTON_WIDTH, BUTTON_HEIGHT);
-            playButton.Text = "PLAY!";
             playButton.Click += new EventHandler((sender, e) => parentForm.PreGamePanel.SwitchTo());
             Controls.Add(playButton);
         }
