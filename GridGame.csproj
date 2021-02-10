@@ -70,6 +70,9 @@
     <EmbeddedResource Include="GameForm.resx">
       <DependentUpon>GameForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="GamePanel.resx">
+      <DependentUpon>GamePanel.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="PreGamePanel.resx">
       <DependentUpon>PreGamePanel.cs</DependentUpon>
     </EmbeddedResource>

@@ -14,8 +14,12 @@ namespace GridGame
         private readonly GameForm parentForm;
 
         private readonly Button[,] buttons = new Button[7, 6];
+        private Button activePlayerButton;
+        private Label activePlayerLabel;
         public Player[] Players { get; private set; }
         private int activePlayer;
+        private static readonly int BUTTON_WIDTH = 45;
+        private static readonly int BUTTON_HEIGHT = 45;
         private static readonly (int, int)[] DIRECTIONS = new (int, int)[] 
         {
             (1, 0),
@@ -34,7 +38,7 @@ namespace GridGame
 
             Location = new Point(0, 0);
             Size = new Size(parentForm.Width, parentForm.Height);
-            Name = "Game Panel";
+            Name = "GamePanel";
 
             for(int x = 0; x < buttons.GetLength(0); x++)
             {
@@ -42,12 +46,27 @@ namespace GridGame
                 {
                     ref var button = ref buttons[x, y];
                     button = new Button();
-                    button.SetBounds(45 + (45 * x), 45 + (45 * y), 45, 45);
+                    button.SetBounds(BUTTON_WIDTH + (BUTTON_WIDTH * x), BUTTON_HEIGHT + (BUTTON_HEIGHT * y), BUTTON_WIDTH, BUTTON_HEIGHT);
                     button.Click += new EventHandler(ButtonsClickHandler);
                     button.Tag = new Coordinate() { x = x, y = y };
                     Controls.Add(button);
                 }
             }
+
+            var buttonGridRightEnd = BUTTON_WIDTH + (BUTTON_WIDTH * buttons.GetLength(0));
+
+            activePlayerLabel = new Label
+            {
+                Location = new Point(buttonGridRightEnd + 2 * BUTTON_WIDTH, BUTTON_HEIGHT),
+                Width = 150,
+                AutoEllipsis = true,
+            };
+            Controls.Add(activePlayerLabel);
+
+            activePlayerButton = new Button();
+            activePlayerButton.SetBounds(activePlayerLabel.Location.X + activePlayerLabel.Width, activePlayerLabel.Location.Y, BUTTON_WIDTH, activePlayerLabel.Height);
+            activePlayerButton.Enabled = false;
+            Controls.Add(activePlayerButton);
         }
 
         public void SwitchTo(Player[] players)
@@ -65,6 +84,9 @@ namespace GridGame
                 }
             }
 
+            activePlayerLabel.Text = "Active Player: " + players[activePlayer].Name;
+            activePlayerButton.BackColor = players[activePlayer].Color;
+
             parentForm.ActivePanel.Visible = false;
             parentForm.ActivePanel = this;
             parentForm.ActivePanel.Visible = true;
@@ -73,21 +95,40 @@ namespace GridGame
         private void ButtonsClickHandler(object sender, EventArgs e)
         {
             var button = ((Button)sender);
-            int x = ((Coordinate)button.Tag).x;
+            var coord = FindBottomButton(((Coordinate)button.Tag).x);
 
-            for(int i = buttons.GetLength(1) - 1; i >= 0; i--)
+            if (coord == null) return;
+            var (x, y) = coord ?? default; //Default is to please the compiler: coord could never be null here
+
+            buttons[x, y].BackColor = Players[activePlayer].Color;
+            activePlayer = (activePlayer + 1) % 2;
+            if(DetectVictory(x, y))
             {
-                if(buttons[x, i].BackColor == Color.LightGray)
+                WinGame();
+            } else
+            {
+                StartNewTurn();
+            }
+        }
+
+        private void StartNewTurn()
+        {
+            activePlayerButton.BackColor = Players[activePlayer].Color;
+            activePlayerLabel.Text = "Active Player: " + Players[activePlayer].Name;
+        }
+
+        //Returns the (x, y) pair corresponding to the lowest button in the column identified by the x coodinate,
+        //or returns null if the column is completely full and there is no such button
+        private (int, int)? FindBottomButton(int x)
+        {
+            for(int y = buttons.GetLength(1) - 1; y >= 0; y--)
+            {
+                if(buttons[x, y].BackColor == Color.LightGray)
                 {
-                    buttons[x, i].BackColor = Players[activePlayer].Color;
-                    activePlayer = (activePlayer + 1) % 2;
-                    if(DetectVictory(x, i))
-                    {
-                        WinGame();
-                    }
-                    break;
+                    return (x, y);
                 }
             }
+            return null;
         }
         
         private bool DetectVictory(int coordX, int coordY)
@@ -114,6 +155,13 @@ namespace GridGame
         private void WinGame()
         {
             parentForm.VictoryPanel.SwitchTo();
+        }
+
+        private void InitializeComponent()
+        {
+            this.SuspendLayout();
+            this.ResumeLayout(false);
+
         }
     }
 
