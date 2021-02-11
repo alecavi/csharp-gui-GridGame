@@ -84,6 +84,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -100,6 +101,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="connect4.ico" />
+    <None Include="Resources\victory.wav" />
+    <None Include="Resources\PieceFalling2.wav" />
+    <None Include="Resources\PieceFalling3.wav" />
+    <None Include="Resources\PieceFalling4.wav" />
+    <None Include="Resources\PieceFalling.wav" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
+using System.Media;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -31,6 +32,16 @@ namespace GridGame
             (1, -1),
             (-1, -1),
         };
+
+        //All the following audio files are licensed under CC0 (public domain, or as close to it as the law permits)
+        private static readonly SoundPlayer[] PIECE_FALLING_SOUNDS = new SoundPlayer[]
+        {
+            new SoundPlayer(Properties.Resources.PieceFalling1),
+            new SoundPlayer(Properties.Resources.PieceFalling2),
+            new SoundPlayer(Properties.Resources.PieceFalling3),
+        };
+        private readonly Random random = new Random();
+        private static readonly SoundPlayer VICTORY_SOUND = new SoundPlayer(Properties.Resources.Victory);
 
         public GamePanel(GameForm parentForm)
         {
@@ -114,12 +125,14 @@ namespace GridGame
             var (x, y) = coord ?? default; //Default is to please the compiler: coord could never be null here
 
             buttons[x, y].BackColor = Players[activePlayer].Color;
-            activePlayer = (activePlayer + 1) % 2;
+
             if(DetectVictory(x, y))
             {
                 WinGame();
             } else
             {
+                PIECE_FALLING_SOUNDS[random.Next(0, 3)].Play();
+                activePlayer = (activePlayer + 1) % 2;
                 StartNewTurn();
             }
         }
@@ -165,8 +178,10 @@ namespace GridGame
                 return colors.All(color => color == firstColor);
             });
         }
+
         private void WinGame()
         {
+            VICTORY_SOUND.Play();
             parentForm.VictoryPanel.SwitchTo();
         }
 
