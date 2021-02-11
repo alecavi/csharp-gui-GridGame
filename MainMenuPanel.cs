@@ -10,7 +10,7 @@ namespace GridGame
 {
     public class MainMenuPanel : Panel
     {
-        private GameForm parentForm;
+        private readonly GameForm parentForm;
         private static readonly int BUTTON_WIDTH = 200;
         private static readonly int BUTTON_HEIGHT = 50;
 
