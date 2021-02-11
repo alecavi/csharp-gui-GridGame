@@ -14,8 +14,8 @@ namespace GridGame
         private readonly GameForm parentForm;
 
         private readonly Button[,] buttons = new Button[7, 6];
-        private Button activePlayerButton;
-        private Label activePlayerLabel;
+        private readonly Button activePlayerButton;
+        private readonly Label activePlayerLabel;
         public Player[] Players { get; private set; }
         private int activePlayer;
         private static readonly int BUTTON_WIDTH = 45;
@@ -57,7 +57,6 @@ namespace GridGame
             }
 
             var buttonGridRightEnd = BUTTON_WIDTH + (BUTTON_WIDTH * buttons.GetLength(0));
-
             activePlayerLabel = new Label
             {
                 Location = new Point(buttonGridRightEnd + 2 * BUTTON_WIDTH, BUTTON_HEIGHT),
@@ -70,6 +69,13 @@ namespace GridGame
             activePlayerButton.SetBounds(activePlayerLabel.Location.X + activePlayerLabel.Width, activePlayerLabel.Location.Y, BUTTON_WIDTH, activePlayerLabel.Height);
             activePlayerButton.Enabled = false;
             Controls.Add(activePlayerButton);
+
+            var menuStrip = new MenuStrip();
+            var restartMenuItem = menuStrip.Items.Add("Restart");
+            restartMenuItem.Click += new EventHandler((sender, args) => StartNewGame());
+            var exitGameMenuItem = menuStrip.Items.Add("Back to main menu");
+            exitGameMenuItem.Click += new EventHandler((sender, args) => parentForm.MainMenuPanel.SwitchTo());
+            Controls.Add(menuStrip);
         }
 
         public void SwitchTo(Player[] players)
@@ -77,8 +83,15 @@ namespace GridGame
             Debug.Assert(players.Length == 2);
 
             Players = players;
-            activePlayer = 0;
+            StartNewGame();
 
+            parentForm.ActivePanel.Visible = false;
+            parentForm.ActivePanel = this;
+            parentForm.ActivePanel.Visible = true;
+        }
+
+        private void StartNewGame()
+        {
             for(int x = 0; x < buttons.GetLength(0); x++)
             {
                 for (int y = 0; y < buttons.GetLength(1); y++)
@@ -87,12 +100,9 @@ namespace GridGame
                 }
             }
 
-            activePlayerLabel.Text = "Active Player: " + players[activePlayer].Name;
-            activePlayerButton.BackColor = players[activePlayer].Color;
+            activePlayer = 0;
+            StartNewTurn();
 
-            parentForm.ActivePanel.Visible = false;
-            parentForm.ActivePanel = this;
-            parentForm.ActivePanel.Visible = true;
         }
 
         private void ButtonsClickHandler(object sender, EventArgs e)
@@ -160,12 +170,6 @@ namespace GridGame
             parentForm.VictoryPanel.SwitchTo();
         }
 
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-            this.ResumeLayout(false);
-
-        }
     }
 
     struct Coordinate
