@@ -17,7 +17,7 @@ namespace GridGame
     {
         public Panel ActivePanel;
         public readonly GamePanel GamePanel;
-        public readonly PreGamePanel PreGamePanel;
+        public readonly PreGamePanel PreGamePanel;        
         public readonly MainMenuPanel MainMenuPanel;
         public readonly VictoryPanel VictoryPanel;
 
