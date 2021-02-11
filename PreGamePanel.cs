@@ -28,7 +28,12 @@ namespace GridGame
             {
                 Name = "playerColumn",
                 HeaderText = "Player",
-                ReadOnly = true
+                ReadOnly = true,
+                DefaultCellStyle = new DataGridViewCellStyle {
+                    Font = new Font("Tahoma", 9.75f, FontStyle.Bold),
+                    BackColor = Color.LightGray,
+                    SelectionBackColor = Color.LightGray,
+                },
             };
 
             var nameColumn = new DataGridViewTextBoxColumn
