@@ -24,11 +24,21 @@ namespace GridGame
 
             var playButton = new Button
             {
-                Text = "PLAY!"
+                Text = "Play",
+                Location = new Point((Width / 2) - (BUTTON_WIDTH / 2), 50),
+                Size = new Size(BUTTON_WIDTH, BUTTON_HEIGHT),
             };
-            playButton.SetBounds((Width / 2) - (BUTTON_WIDTH / 2), 50, BUTTON_WIDTH, BUTTON_HEIGHT);
             playButton.Click += new EventHandler((sender, e) => parentForm.PreGamePanel.SwitchTo());
             Controls.Add(playButton);
+
+            var quitButton = new Button
+            {
+                Text = "Quit",
+                Location = new Point(playButton.Location.X, playButton.Location.Y + playButton.Height),
+                Size = new Size(BUTTON_WIDTH, BUTTON_HEIGHT),
+            };
+            quitButton.Click += new EventHandler((sender, e) => Application.Exit());
+            Controls.Add(quitButton);
         }
 
         public void SwitchTo()
