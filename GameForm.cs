@@ -24,6 +24,7 @@ namespace GridGame
         public GameForm()
         {
             InitializeComponent();
+            Text = "Connect 4!";
 
             MainMenuPanel = new MainMenuPanel(this)
             {
