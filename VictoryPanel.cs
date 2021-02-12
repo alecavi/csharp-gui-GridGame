@@ -62,11 +62,6 @@ namespace GridGame
             Controls.Add(showScoreButton);
         }
 
-        public void score()
-        {
-            = "Your Score is " + HighScore.Score;
-        }
-
         public void SwitchTo()
         {
             parentForm.ActivePanel.Visible = false;
