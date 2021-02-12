@@ -52,6 +52,12 @@ namespace GridGame
                 UseColumnTextForButtonValue = true,
             };
 
+            var difficultyColumn = new DataGridViewTextBoxColumn
+            {
+                Name = "difficultyColumn",
+                HeaderText = "Difficulty",
+            };
+
             paramTable = new DataGridView
             {
                 Location = new Point(0, 0),
@@ -61,7 +67,7 @@ namespace GridGame
             };
             paramTable.DefaultCellStyle.SelectionBackColor = paramTable.DefaultCellStyle.BackColor;
             paramTable.DefaultCellStyle.SelectionForeColor = paramTable.DefaultCellStyle.ForeColor;
-            paramTable.Columns.AddRange(new DataGridViewColumn[] {playerColumn, nameColumn, colorColumn});
+            paramTable.Columns.AddRange(new DataGridViewColumn[] {playerColumn, nameColumn, colorColumn, difficultyColumn });
             paramTable.CellContentClick += new DataGridViewCellEventHandler(ParamTableEventHandler);
             paramTable.ScrollBars = ScrollBars.None;
 
@@ -73,6 +79,8 @@ namespace GridGame
             row1.Cells["nameColumn"].Value = "Player 1";
             row1.Cells["colorColumn"].Style.ForeColor = Color.Red;
             row1.Cells["colorColumn"].Style.BackColor = Color.Red;
+            row1.Cells["difficultyColumn"].Value = "Easy";
+
 
 
             //Player 2:
@@ -82,6 +90,7 @@ namespace GridGame
             row2.Cells["nameColumn"].Value = "Player 2";
             row2.Cells["colorColumn"].Style.ForeColor = Color.Yellow;
             row2.Cells["colorColumn"].Style.BackColor = Color.Yellow;
+            row2.Cells["difficultyColumn"].Value = "Easy";
 
             SizeParamTable(paramTable);
             Controls.Add(paramTable);
@@ -108,7 +117,7 @@ namespace GridGame
 
         private void ParamTableEventHandler(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.ColumnIndex == 2 && e.RowIndex >= 0) //third column, any row except for the header
+            if (e.ColumnIndex == 3 && e.RowIndex >= 0) //third column, any row except for the header
             {
                 if (colorDialog.ShowDialog() == DialogResult.OK)
                 {
@@ -129,13 +138,34 @@ namespace GridGame
             {
                 var color = ((DataGridViewButtonCell)paramTable["colorColumn", i]).Style.BackColor;
                 var nameTextBox = (DataGridViewTextBoxCell)paramTable["nameColumn", i];
+                //var difficultyBox = (DataGridViewTextBoxCell)paramTable["difficultyColumn", i].Value;
+               // String difficulty = (string)difficultyBox.Value;
 
-                if(nameTextBox.Value == null)
+                if (nameTextBox.Value == null)
                 {
                     MessageBox.Show("Player " + i + " has not selected a name", "Select a name", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
+                /**
+                if (difficulty == "Easy") 
+                {
+                
+                }
+                else if(difficulty == "Medium")
+                {
+                    
+                }
+                else if (difficulty == "Hard")
+                { 
+
+                }
+                else 
+                {
+                    MessageBox.Show("Player " + i + " has not selected a valid difficulty", "Select a difficulty, from Easy, Medium or Hard", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+                **/
                 var name = (string)nameTextBox.Value;
                 players[i] = new Player(color, name);
             }
